@@ -1,0 +1,1272 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hamilton's Bridge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400;1,600&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#EDF0F3; --panel:#F8F9FB; --ink:#18202B; --muted:#586374; --rule:#D0D7E0; --faint:#B9C2CE;
+  --re:#6A4CC0; --i:#C9501B; --j:#2B8453; --k:#2767CC; --ship:#7C8FA8; --stone:#E2E5E1;
+  --serif:"Spectral", Georgia, "Times New Roman", serif;
+  --sans:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1319; --panel:#161C25; --ink:#E3E8EF; --muted:#94A1B2; --rule:#2A3441; --faint:#3A4656;
+    --re:#9A7CEA; --i:#DC6530; --j:#4DC487; --k:#5C9CF2; --ship:#8EA2BE; --stone:#1D232B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1319; --panel:#161C25; --ink:#E3E8EF; --muted:#94A1B2; --rule:#2A3441; --faint:#3A4656;
+  --re:#9A7CEA; --i:#DC6530; --j:#4DC487; --k:#5C9CF2; --ship:#8EA2BE; --stone:#1D232B;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:28px 80px}
+h1,h2,h3{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.4rem,6vw,4rem);letter-spacing:-.01em}
+h1 em{font-style:italic;font-weight:400;color:var(--re)}
+h2{font-size:clamp(1.6rem,3.4vw,2.2rem)}
+h3{font-size:1.2rem}
+p{margin:0}
+.prose{max-width:66ch;display:flex;flex-direction:column;gap:14px}
+.prose ul,.prose ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+var,.m{font-family:var(--serif);font-style:italic;font-size:1.06em}
+.m-i{color:var(--i)} .m-j{color:var(--j)} .m-k{color:var(--k)} .m-re{color:var(--re)}
+.mono{font-family:var(--mono);font-size:.88em}
+a{color:var(--k)}
+button:focus-visible,input:focus-visible,select:focus-visible,td:focus-visible,a:focus-visible{outline:2px solid var(--k);outline-offset:2px}
+.display{font:italic 1.25rem/1.45 var(--serif);text-align:center;padding-block:4px;overflow-x:auto}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:36px;align-items:center;padding-block:24px 36px}
+.hero .lede{font-size:1.15rem;color:var(--muted);max-width:44ch}
+.hero-text{display:flex;flex-direction:column;gap:18px}
+.carving{align-self:flex-start;font:600 clamp(1.05rem,2.4vw,1.35rem)/1 var(--serif);font-style:italic;background:var(--stone);border:1px solid var(--rule);padding:14px 18px;border-radius:3px;letter-spacing:.02em}
+.carving small{display:block;font:400 11px/1.4 var(--mono);font-style:normal;letter-spacing:.08em;color:var(--muted);margin-top:8px;text-transform:uppercase}
+.hero-fig{display:flex;flex-direction:column;gap:8px;margin:0}
+.hero canvas{width:100%;aspect-ratio:1/0.85;max-width:100%;display:block}
+.readout{font:400 13px/1.5 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.readout b{font-weight:600;color:var(--ink)}
+
+/* contents */
+nav.toc{border-block:1px solid var(--rule);padding-block:14px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline}
+nav.toc .eyebrow{margin-right:6px}
+nav.toc a{color:var(--ink);text-decoration:none;font-size:.95rem;border-bottom:1px solid var(--faint)}
+nav.toc a:hover{border-color:var(--re);color:var(--re)}
+
+section{padding-block:60px 8px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:12px}
+
+/* labs */
+.lab{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.lab-canvas{position:relative;border-right:1px solid var(--rule)}
+.lab-canvas canvas{width:100%;aspect-ratio:1/0.82;display:block;max-width:100%}
+.lab-canvas .hint{position:absolute;left:12px;bottom:10px;font:400 11px/1 var(--mono);color:var(--muted);letter-spacing:.05em}
+.lab-canvas .tag{position:absolute;left:12px;top:10px;font:600 12px/1.3 var(--mono);color:var(--ink);letter-spacing:.03em}
+.lab-side{padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font:600 12px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0}
+input[type=range]{width:100%;accent-color:var(--re)}
+select{font:400 14px/1 var(--mono);padding:6px 8px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--ink)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:600 13px/1 var(--sans);padding:9px 14px;border-radius:4px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--re);border-color:var(--re);color:#fff}
+.out{font:400 13.5px/1.7 var(--mono);font-variant-numeric:tabular-nums;border-top:1px solid var(--rule);padding-top:12px;overflow-x:auto;white-space:nowrap}
+.out .lbl{color:var(--muted);display:inline-block;min-width:4.2em}
+.note{font-size:.95rem;color:var(--muted)}
+.verdict{font-size:.98rem;padding:10px 12px;border-radius:4px;background:var(--bg);border:1px solid var(--rule)}
+.verdict.alert{border-color:var(--i)}
+.verdict b{color:var(--ink)}
+
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+
+/* table */
+.tbl-wrap{overflow-x:auto}
+table.mult{border-collapse:collapse;font:600 1.15rem/1 var(--serif);font-style:italic}
+table.mult th,table.mult td{width:62px;height:52px;text-align:center;border:1px solid var(--rule)}
+table.mult th{color:var(--muted);font-weight:400;background:var(--bg)}
+table.mult td{background:var(--panel);cursor:pointer;transition:background .15s}
+table.mult td:hover{background:var(--bg)}
+table.mult td.sel{background:var(--re);color:#fff}
+table.mult td.sel span{color:#fff}
+table.mult td.mir{outline:2px dashed var(--re);outline-offset:-4px}
+table.mult caption{caption-side:bottom;text-align:left;padding-top:10px;font:400 12px/1.4 var(--mono);color:var(--muted);font-style:normal}
+.tbl-msg{font-size:1.05rem;min-height:3.2em}
+.cycle{max-width:260px;width:100%}
+
+.callouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 28px}
+.callout{border-top:2px solid var(--ink);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.formula{font:400 1.05rem/1.5 var(--serif);font-style:italic;background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;overflow-x:auto;white-space:nowrap}
+
+/* worked steps */
+.steps{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:18px 20px;max-width:760px;overflow-x:auto}
+.steps .s{font:600 11px/1.9 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.steps .e{font:italic 1.08rem/1.6 var(--serif);white-space:nowrap}
+.steps .e small{font:400 .82rem/1 var(--sans);font-style:normal;color:var(--muted);margin-left:10px}
+
+/* triples bars */
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar-row{display:grid;grid-template-columns:3.2em 1fr 5.5em;gap:10px;align-items:center;font:400 13px/1.2 var(--mono);font-variant-numeric:tabular-nums}
+.track{position:relative;height:22px;border-radius:3px;background:var(--bg);border:1px solid var(--rule)}
+.track .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--faint)}
+.track .need{position:absolute;top:-3px;bottom:-3px;width:3px;margin-left:-1.5px;background:var(--ink);border-radius:1px}
+.track .got{position:absolute;top:5px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--re);border:2px solid var(--panel)}
+.bar-key{display:flex;gap:18px;font:400 12px/1 var(--mono);color:var(--muted);flex-wrap:wrap}
+.bar-key i{display:inline-block;vertical-align:middle;margin-right:6px}
+
+/* rotation lab */
+.inset{display:flex;gap:14px;align-items:center}
+.inset canvas{width:150px;height:150px;flex:none;display:block}
+.inset p{font-size:.93rem;color:var(--muted)}
+
+/* order demo */
+.pair{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.pair>div{position:relative;min-width:0}
+.pair>div+div{border-left:1px solid var(--rule)}
+.pair canvas{width:100%;aspect-ratio:1/0.8;display:block}
+.pair .out{border-top:1px solid var(--rule);padding:10px 14px}
+.ctlbar{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:end;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 18px}
+.ctlbar .ctl{min-width:180px;flex:1}
+.ctlbar .grp{display:flex;flex-direction:column;gap:6px}
+.ctlbar .grp span{font:600 12px/1.2 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ctlbar .grp div{display:flex;gap:6px}
+
+/* chart */
+.chart-box{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.chart-box h3{font-size:1rem}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font:400 12.5px/1 var(--sans);color:var(--ink)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:18px;height:0;border-top:2px solid;display:inline-block}
+#speed{width:100%;height:220px;display:block}
+
+/* calculator */
+.calc{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.qin{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font:400 1.1rem/1 var(--serif);font-style:italic}
+.qin .nm{width:2em;font-weight:600}
+.qin input{width:4.6em;font:400 15px/1 var(--mono);padding:7px 6px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--ink);text-align:right}
+.calc .res{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 24px;font:400 14px/1.6 var(--mono);font-variant-numeric:tabular-nums}
+.calc .res div{overflow-x:auto;white-space:nowrap}
+.calc .res .lbl{display:block;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+
+/* family */
+table.fam{border-collapse:collapse;width:100%;min-width:560px;font-size:.97rem}
+table.fam th,table.fam td{padding:10px 12px;border-bottom:1px solid var(--rule);text-align:left}
+table.fam th{font:600 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+table.fam td.sym{font:600 1.3rem/1 var(--serif)}
+table.fam tr.here td{background:var(--panel)}
+table.fam .no{color:var(--muted)}
+.foot{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-size:.9rem;color:var(--muted);max-width:66ch}
+
+@media (max-width:820px){
+  .hero,.twocol{grid-template-columns:1fr}
+  .lab{grid-template-columns:1fr}
+  .lab-canvas{border-right:0;border-bottom:1px solid var(--rule)}
+  .callouts,.calc .res{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .pair{grid-template-columns:1fr}
+  .pair>div+div{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:420px){ .inset{flex-direction:column;align-items:flex-start} }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="hero-text">
+    <span class="eyebrow">Dublin · 16 October 1843</span>
+    <h1>From <em>i</em> to <em>i, j, k</em></h1>
+    <p class="lede">Complex numbers turn the plane. Quaternions turn space. This page follows the path William Rowan Hamilton took from one to the other. There are twelve stops, and every figure on the way is live.</p>
+    <div class="carving">i² = j² = k² = ijk = −1<small>Scratched into Broom Bridge, Royal Canal</small></div>
+  </div>
+  <figure class="hero-fig">
+    <canvas id="hero" aria-label="A dart shape turning smoothly between random orientations, driven by a unit quaternion"></canvas>
+    <div class="readout" id="heroOut"></div>
+  </figure>
+</header>
+
+<nav class="toc" aria-label="Contents">
+  <span class="eyebrow">Contents</span>
+  <a href="#complex">Turning the plane</a>
+  <a href="#euler">Euler's formula</a>
+  <a href="#triples">Why not three?</a>
+  <a href="#rules">The rules</a>
+  <a href="#relation">ℂ inside ℍ</a>
+  <a href="#roots">A sphere of √−1</a>
+  <a href="#order">Order matters</a>
+  <a href="#rotation">q v q*</a>
+  <a href="#gimbal">Gimbal lock</a>
+  <a href="#slerp">Slerp</a>
+  <a href="#calc">Calculator</a>
+  <a href="#family">The family</a>
+</nav>
+
+<!-- COMPLEX -->
+<section id="complex">
+  <div class="prose">
+    <span class="eyebrow">Where it starts</span>
+    <h2>Multiplying by a complex number is a turn</h2>
+    <p>A complex number <var>z</var> = <var>a</var> + <var>b</var><var class="m-i">i</var> is a point (<var>a</var>, <var>b</var>) in the plane, with the single rule <var class="m-i">i</var>² = −1. Adding complex numbers adds the points like arrows. Multiplying them is where the geometry is.</p>
+    <p>Write any complex number in <strong>polar form</strong>: a length <var>r</var> = |<var>w</var>| and an angle θ, so <var>w</var> = <var>r</var>(cos θ + <var class="m-i">i</var> sin θ). Then multiplying <var>z</var> by <var>w</var> does two things at once:</p>
+    <ul>
+      <li>it scales <var>z</var> by <var>r</var>, so lengths multiply: |<var>zw</var>| = |<var>z</var>| |<var>w</var>|;</li>
+      <li>it rotates <var>z</var> by θ, so angles add: arg(<var>zw</var>) = arg(<var>z</var>) + arg(<var>w</var>).</li>
+    </ul>
+    <p>So a complex number of length 1 <em>is</em> a rotation of the plane. Multiplying by <var class="m-i">i</var> is exactly a quarter turn, since <var class="m-i">i</var> = cos 90° + <var class="m-i">i</var> sin 90°. Doing it twice turns 180°, which is multiplying by −1. That is the geometric reason <var class="m-i">i</var>² = −1.</p>
+    <p>Drag <var>z</var> around and change <var>w</var>. Try <var>w</var> = <var class="m-i">i</var> and watch <var>z</var> step round in four quarter turns.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-canvas">
+      <canvas id="cplx" aria-label="Complex plane showing z, w and their product"></canvas>
+      <span class="hint">drag to move z</span>
+    </div>
+    <div class="lab-side">
+      <div class="ctl"><label for="cTheta">angle of w <output id="cThetaO"></output></label><input id="cTheta" type="range" min="-180" max="180" step="1" value="40"></div>
+      <div class="ctl"><label for="cR">length of w <output id="cRO"></output></label><input id="cR" type="range" min="0.5" max="1.4" step="0.01" value="1"></div>
+      <div class="btns"><button id="cI">Set w = i</button><button id="cUnit">Length 1</button><button id="cSpiral">Length 0.9</button></div>
+      <div class="out" id="cOut"></div>
+      <p class="note">The faint dots are <var>z</var>, <var>zw</var>, <var>zw</var>², … With |<var>w</var>| = 1 they stay on one circle. Any other length makes a spiral.</p>
+    </div>
+  </div>
+  <div class="callouts">
+    <div class="callout">
+      <h3>The same thing as a matrix</h3>
+      <p>Multiplying by <var>w</var> = <var>a</var> + <var>b</var><var class="m-i">i</var> is a linear map of the plane with matrix</p>
+      <div class="formula">[[a, −b], [b, a]] = r · [[cos θ, −sin θ], [sin θ, cos θ]]</div>
+      <p>A rotation matrix times a scale. Complex numbers are a compact way of writing exactly these matrices, and multiplying them in either order gives the same answer.</p>
+    </div>
+    <div class="callout">
+      <h3>The conjugate is a mirror</h3>
+      <p>The conjugate <var>z̄</var> = <var>a</var> − <var>b</var><var class="m-i">i</var> reflects <var>z</var> in the real axis. Multiplying a number by its own mirror cancels the angle and leaves the squared length:</p>
+      <div class="formula">z z̄ = a² + b² = |z|²,&emsp; so&emsp; z⁻¹ = z̄ / |z|²</div>
+      <p>For a unit complex number the inverse is simply the conjugate: turning back is the same as turning by −θ. Quaternions keep exactly this rule.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EULER -->
+<section id="euler">
+  <div class="prose">
+    <span class="eyebrow">The exponential</span>
+    <h2>Why <var>e</var><sup><var class="m-i">i</var>θ</sup> lands on the circle</h2>
+    <p>Euler's formula says <var>e</var><sup><var class="m-i">i</var>θ</sup> = cos θ + <var class="m-i">i</var> sin θ. You can watch it happen. The exponential is the sum 1 + <var>x</var> + <var>x</var>²/2! + <var>x</var>³/3! + …, and with <var>x</var> = <var class="m-i">i</var>θ each term is the previous one multiplied by <var class="m-i">i</var>θ/<var>n</var>.</p>
+    <p>Multiplying by <var class="m-i">i</var> is a quarter turn, so each new term points 90° left of the one before, and gets shorter once <var>n</var> exceeds θ. Added head to tail, the terms curl inward and settle on the point at angle θ on the unit circle. Add terms one at a time and watch the spiral close in.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-canvas">
+      <canvas id="series" aria-label="Partial sums of the exponential series for e to the i theta drawn head to tail"></canvas>
+    </div>
+    <div class="lab-side">
+      <div class="ctl"><label for="sTh">θ <output id="sThO"></output></label><input id="sTh" type="range" min="-180" max="180" step="1" value="120"></div>
+      <div class="ctl"><label for="sN">terms added <output id="sNO"></output></label><input id="sN" type="range" min="1" max="16" step="1" value="4"></div>
+      <div class="btns"><button id="sPlay" class="primary">Add terms one by one</button></div>
+      <div class="out" id="sOut"></div>
+      <p class="note">Real terms (1, −θ²/2!, θ⁴/4!, …) are drawn in ink, imaginary ones in orange. Only one fact was used: <var class="m-i">i</var>² = −1. Keep that in mind for later.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRIPLES -->
+<section id="triples">
+  <div class="prose">
+    <span class="eyebrow">The problem</span>
+    <h2>Hamilton wanted triples, and triples don't work</h2>
+    <p>If two numbers describe turns in the plane, three should describe turns in space. For over a decade Hamilton tried to multiply triples <var>a</var> + <var>b</var><var class="m-i">i</var> + <var>c</var><var class="m-j">j</var>, with <var class="m-i">i</var>² = <var class="m-j">j</var>² = −1, so that lengths multiply the way they do for complex numbers.</p>
+    <p>The sticking point is the product <var class="m-i">i</var><var class="m-j">j</var>. In a system of triples it has to be another triple, say <var class="m-i">i</var><var class="m-j">j</var> = <var>a</var> + <var>b</var><var class="m-i">i</var> + <var>c</var><var class="m-j">j</var>. Now multiply both sides on the left by <var class="m-i">i</var>. If multiplication is associative, the left side is (<var class="m-i">i</var><var class="m-i">i</var>)<var class="m-j">j</var> = −<var class="m-j">j</var>. The right side expands to</p>
+    <p class="display"><var class="m-i">i</var>(<var>a</var> + <var>b</var><var class="m-i">i</var> + <var>c</var><var class="m-j">j</var>) = (<var>ca</var> − <var>b</var>) + (<var>a</var> + <var>cb</var>)<var class="m-i">i</var> + <var>c</var>²<var class="m-j">j</var></p>
+    <p>For the two sides to match, the <var class="m-j">j</var> part needs <var>c</var>² = −1. Try it yourself: pick any <var>a</var>, <var>b</var>, <var>c</var> and see whether the right side can reach −<var class="m-j">j</var>.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-side" style="border-right:1px solid var(--rule)">
+      <div class="ctl"><label for="ta">a (real part of ij) <output id="taO"></output></label><input id="ta" type="range" min="-2" max="2" step="0.05" value="0.5"></div>
+      <div class="ctl"><label for="tb">b (i part of ij) <output id="tbO"></output></label><input id="tb" type="range" min="-2" max="2" step="0.05" value="-0.4"></div>
+      <div class="ctl"><label for="tc">c (j part of ij) <output id="tcO"></output></label><input id="tc" type="range" min="-2" max="2" step="0.05" value="0.8"></div>
+      <div class="btns"><button id="tSolve">Fix the first two rows</button><button id="tRand">Random guess</button></div>
+    </div>
+    <div class="lab-side">
+      <div class="bar-key"><span><i style="width:3px;height:14px;background:var(--ink)"></i>needed for −j</span><span><i style="width:11px;height:11px;border-radius:50%;background:var(--re)"></i>what your guess gives</span></div>
+      <div class="bars" id="tBars"></div>
+      <p class="verdict" id="tVerdict"></p>
+    </div>
+  </div>
+  <div class="prose">
+    <p>No real <var>c</var> squares to −1, so no triple system works, at least none that keeps associativity. Hurwitz later proved the general version in 1898: a multiplication that preserves length exists only in dimensions 1, 2, 4 and 8. Three is not on the list.</p>
+    <p>Walking along the Royal Canal on 16 October 1843, Hamilton saw the way out. Stop forcing <var class="m-i">i</var><var class="m-j">j</var> back into the triple. Give it its own new direction <var class="m-k">k</var>, work in four dimensions, and give up the rule that <var>pq</var> = <var>qp</var>. He cut the rules into the stone of the bridge he was crossing.</p>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="rules">
+  <div class="prose">
+    <span class="eyebrow">The rules</span>
+    <h2>Three square roots of −1 that don't commute</h2>
+    <p>A quaternion is <var>q</var> = <var>w</var> + <var>x</var><var class="m-i">i</var> + <var>y</var><var class="m-j">j</var> + <var>z</var><var class="m-k">k</var>, four real numbers. Everything follows from the one line on the bridge, <var class="m-i">i</var>² = <var class="m-j">j</var>² = <var class="m-k">k</var>² = <var class="m-i">i</var><var class="m-j">j</var><var class="m-k">k</var> = −1. For example, multiply <var class="m-i">i</var><var class="m-j">j</var><var class="m-k">k</var> = −1 on the right by <var class="m-k">k</var>:</p>
+    <p class="display"><var class="m-i">i</var><var class="m-j">j</var><var class="m-k">k</var><var class="m-k">k</var> = −<var class="m-k">k</var>&ensp;⇒&ensp;<var class="m-i">i</var><var class="m-j">j</var>(−1) = −<var class="m-k">k</var>&ensp;⇒&ensp;<var class="m-i">i</var><var class="m-j">j</var> = <var class="m-k">k</var></p>
+    <p>The same trick gives <var class="m-j">j</var><var class="m-k">k</var> = <var class="m-i">i</var> and <var class="m-k">k</var><var class="m-i">i</var> = <var class="m-j">j</var>, and reversing any pair flips the sign. Tap any cell of the table to compare the product both ways round.</p>
+  </div>
+  <div class="twocol">
+    <div class="tbl-wrap">
+      <table class="mult" id="mult"><caption>row × column</caption></table>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <p class="tbl-msg" id="multMsg"></p>
+      <svg class="cycle" viewBox="0 0 260 230" role="img" aria-label="Cycle diagram: i to j to k to i. Following the arrows gives a positive product, going against them a negative one.">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <g fill="none" stroke="var(--muted)" stroke-width="1.6" marker-end="url(#ah)">
+          <path d="M152 44 Q205 70 206 130"/>
+          <path d="M184 176 Q130 205 76 176"/>
+          <path d="M54 130 Q55 70 108 44"/>
+        </g>
+        <g font-family="Spectral, Georgia, serif" font-style="italic" font-weight="600" font-size="30" text-anchor="middle">
+          <circle cx="130" cy="36" r="22" fill="var(--panel)" stroke="var(--i)" stroke-width="2"/><text x="130" y="46" fill="var(--i)">i</text>
+          <circle cx="206" cy="160" r="22" fill="var(--panel)" stroke="var(--j)" stroke-width="2"/><text x="206" y="170" fill="var(--j)">j</text>
+          <circle cx="54" cy="160" r="22" fill="var(--panel)" stroke="var(--k)" stroke-width="2"/><text x="54" y="170" fill="var(--k)">k</text>
+        </g>
+        <text x="130" y="118" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">with the arrow: +</text>
+        <text x="130" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">against it: −</text>
+      </svg>
+      <p class="note">The same pattern as the cross product of unit vectors: x × y = z, y × z = x, z × x = y. That is no coincidence, as the next section shows.</p>
+    </div>
+  </div>
+  <div class="callouts">
+    <div class="callout">
+      <h3>Conjugate and length, exactly as in ℂ</h3>
+      <p>The conjugate flips the sign of all three imaginary parts. A quaternion times its conjugate is again its squared length, a plain real number:</p>
+      <div class="formula">q* = w − xi − yj − zk,&emsp; q q* = w² + x² + y² + z² = |q|²</div>
+      <p>So every nonzero quaternion has an inverse, <var>q</var>⁻¹ = <var>q</var>* / |<var>q</var>|², and for a unit quaternion <var>q</var>⁻¹ = <var>q</var>*. You can divide, just as in ℂ.</p>
+    </div>
+    <div class="callout">
+      <h3>What changes: order</h3>
+      <p>Lengths still multiply, |<var>pq</var>| = |<var>p</var>| |<var>q</var>|, which is what Hamilton wanted. The price is that <var>pq</var> and <var>qp</var> are usually different. One consequence to remember:</p>
+      <div class="formula">(pq)* = q* p*,&emsp; (pq)⁻¹ = q⁻¹ p⁻¹</div>
+      <p>The order reverses, like taking off socks and shoes. Rotations in space behave the same way, which is exactly why quaternions fit them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RELATION -->
+<section id="relation">
+  <div class="prose">
+    <span class="eyebrow">The relation</span>
+    <h2>The complex numbers are still in there, many times over</h2>
+    <p>Quaternions don't replace complex numbers. They contain them, in four different ways that each say something useful.</p>
+  </div>
+  <div class="callouts">
+    <div class="callout">
+      <h3>A copy of ℂ along every axis</h3>
+      <p>Drop <var class="m-j">j</var> and <var class="m-k">k</var> and what remains, <var>a</var> + <var>b</var><var class="m-i">i</var>, multiplies exactly like ℂ. But <var class="m-i">i</var> is not special. For any unit vector (<var>x</var>, <var>y</var>, <var>z</var>) the pure quaternion <var class="m-re">u</var> = <var>x</var><var class="m-i">i</var> + <var>y</var><var class="m-j">j</var> + <var>z</var><var class="m-k">k</var> also squares to −1:</p>
+      <div class="formula">u² = −(x² + y² + z²) = −1</div>
+      <p>There is a whole sphere of square roots of −1, and each one spans its own complex plane {<var>a</var> + <var>b</var><var class="m-re">u</var>}. The next demo lets you pick one.</p>
+    </div>
+    <div class="callout">
+      <h3>Euler's formula, with any axis</h3>
+      <p>The spiral in the Euler demo used only <var class="m-i">i</var>² = −1. Since <var class="m-re">u</var>² = −1 too, the same series gives</p>
+      <div class="formula">e<sup>uφ</sup> = cos φ + u sin φ</div>
+      <p>Unit complex numbers are <var>e</var><sup><var class="m-i">i</var>φ</sup>, a circle. Unit quaternions are <var>e</var><sup><var class="m-re">u</var>φ</sup> for every axis <var class="m-re">u</var>: a 3-sphere in 4D, made of great circles, one complex circle per direction.</p>
+    </div>
+    <div class="callout">
+      <h3>Non-commutativity is only the cross product</h3>
+      <p>Write <var>q</var> as a scalar and a vector, (<var>s</var>, <b>v</b>). Then</p>
+      <div class="formula">(s, v)(t, w) = (st − v·w,&nbsp; sw + tv + v×w)</div>
+      <p>If <b>v</b> and <b>w</b> point the same way, <b>v</b>×<b>w</b> = 0 and the product is ordinary complex multiplication. Order only matters when the axes differ. This formula is also where the dot and cross products of vector algebra came from.</p>
+    </div>
+    <div class="callout">
+      <h3>A pair of complex numbers</h3>
+      <p>Since <var class="m-i">i</var><var class="m-j">j</var> = <var class="m-k">k</var>, every quaternion splits as</p>
+      <div class="formula">(a + bi) + (c + di)j = z₁ + z₂ j</div>
+      <p>Just as ℂ is a pair of reals, ℍ is a pair of complex numbers (the Cayley–Dickson construction). As a 2 × 2 complex matrix, <var>q</var> ↦ [[<var>z</var>₁, <var>z</var>₂], [−<var>z̄</var>₂, <var>z̄</var>₁]], with determinant |<var>q</var>|². Unit quaternions become the group SU(2) of quantum spin. The calculator below shows this matrix live.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROOTS -->
+<section id="roots">
+  <div class="prose">
+    <span class="eyebrow">Interactive</span>
+    <h2>Pick any square root of −1</h2>
+    <p>Treat the imaginary part <var>x</var><var class="m-i">i</var> + <var>y</var><var class="m-j">j</var> + <var>z</var><var class="m-k">k</var> as an arrow in 3D space. Every arrow of length 1 is a square root of −1. Move <var class="m-re">u</var> around the sphere and check two things: <var class="m-re">u</var>² stays −1, and complex arithmetic done with <var class="m-re">u</var> instead of <var class="m-i">i</var> gives the same answers.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-canvas">
+      <canvas id="rootsC" aria-label="Unit sphere of pure quaternions with the chosen axis u"></canvas>
+      <span class="hint">drag sideways to orbit the view</span>
+    </div>
+    <div class="lab-side">
+      <div class="ctl"><label for="uAz">azimuth of u <output id="uAzO"></output></label><input id="uAz" type="range" min="0" max="360" step="1" value="60"></div>
+      <div class="ctl"><label for="uEl">elevation of u <output id="uElO"></output></label><input id="uEl" type="range" min="-90" max="90" step="1" value="25"></div>
+      <div class="ctl"><label for="uPhi">φ for e<sup>uφ</sup> <output id="uPhiO"></output></label><input id="uPhi" type="range" min="0" max="360" step="1" value="60"></div>
+      <div class="btns"><button id="uRand">Random axis</button><button id="uI">u = i</button><button id="uK">u = k</button></div>
+      <div class="out" id="uOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER -->
+<section id="order">
+  <div class="prose">
+    <span class="eyebrow">Interactive</span>
+    <h2>Order matters, for rotations and for quaternions</h2>
+    <p>Pick up a book. Turn it 90° about one axis, then 90° about another. Start again and do the two turns the other way round. The book ends up in a different pose. Rotations in 3D do not commute, so any algebra that describes them can't commute either. That is why Hamilton had to give up <var>pq</var> = <var>qp</var>.</p>
+    <p>With quaternions, "rotate by <var>q</var><sub>A</sub>, then by <var>q</var><sub>B</sub>" is the product <var>q</var><sub>B</sub><var>q</var><sub>A</sub>: the rotation applied first sits closest to the vector in <var>q</var><sub>B</sub><var>q</var><sub>A</sub> <var>v</var> <var>q</var><sub>A</sub>*<var>q</var><sub>B</sub>*. Below, the left dart does A then B, the right one B then A.</p>
+  </div>
+  <div class="ctlbar">
+    <div class="grp"><span>Rotation A</span><div><select id="oAax" aria-label="Axis of rotation A"><option value="i" selected>about i</option><option value="j">about j</option><option value="k">about k</option></select><select id="oAang" aria-label="Angle of rotation A"><option value="90" selected>90°</option><option value="180">180°</option><option value="-90">−90°</option><option value="45">45°</option></select></div></div>
+    <div class="grp"><span>Rotation B</span><div><select id="oBax" aria-label="Axis of rotation B"><option value="i">about i</option><option value="j" selected>about j</option><option value="k">about k</option></select><select id="oBang" aria-label="Angle of rotation B"><option value="90" selected>90°</option><option value="180">180°</option><option value="-90">−90°</option><option value="45">45°</option></select></div></div>
+    <div class="ctl"><label for="oP">progress <output id="oPO"></output></label><input id="oP" type="range" min="0" max="200" step="1" value="200"></div>
+    <div class="btns"><button id="oPlay" class="primary">Play both</button></div>
+  </div>
+  <div class="pair">
+    <div><canvas id="oL" aria-label="Dart rotated by A then B"></canvas><span style="position:absolute;left:12px;top:10px;font:600 12px/1.3 var(--mono)">A, then B</span><div class="out" id="oLOut"></div></div>
+    <div><canvas id="oR" aria-label="Dart rotated by B then A"></canvas><span style="position:absolute;left:12px;top:10px;font:600 12px/1.3 var(--mono)">B, then A</span><div class="out" id="oROut"></div></div>
+  </div>
+  <p class="verdict" id="oVerdict"></p>
+</section>
+
+<!-- ROTATION -->
+<section id="rotation">
+  <div class="prose">
+    <span class="eyebrow">The payoff</span>
+    <h2>Turning space with <var>q v q</var>*</h2>
+    <p>Store a vector as a pure quaternion <var>v</var> = <var>x</var><var class="m-i">i</var> + <var>y</var><var class="m-j">j</var> + <var>z</var><var class="m-k">k</var>. To turn it by θ about the unit axis <var class="m-re">u</var>, build</p>
+    <p class="display"><var>q</var> = cos(θ/2) + <var class="m-re">u</var> sin(θ/2) = <var>e</var><sup><var class="m-re">u</var>θ/2</sup>,&emsp; <var>v</var>′ = <var>q v q</var>*</p>
+    <p>That is the whole recipe. Here is why it works, and why the angle is halved. Split <var>v</var> into a part along the axis and a part perpendicular to it, <var>v</var> = <var>v</var><sub>∥</sub> + <var>v</var><sub>⊥</sub>.</p>
+    <ul>
+      <li><strong>The part along the axis stays put.</strong> <var>v</var><sub>∥</sub> is a multiple of <var class="m-re">u</var>, so it lives in the same complex plane as <var>q</var> and commutes with it. Then <var>q v</var><sub>∥</sub><var>q</var>* = <var>v</var><sub>∥</sub><var>q q</var>* = <var>v</var><sub>∥</sub>.</li>
+      <li><strong>The perpendicular part turns by the full angle.</strong> Perpendicular pure quaternions anticommute: <var>v</var><sub>⊥</sub><var class="m-re">u</var> = −<var class="m-re">u</var><var>v</var><sub>⊥</sub>. That lets <var>q</var>* slide past <var>v</var><sub>⊥</sub> by becoming <var>q</var>: <var>v</var><sub>⊥</sub><var>q</var>* = <var>q v</var><sub>⊥</sub>. So <var>q v</var><sub>⊥</sub><var>q</var>* = <var>q</var>²<var>v</var><sub>⊥</sub>, and <var>q</var>² = cos θ + <var class="m-re">u</var> sin θ.</li>
+    </ul>
+    <p>In the plane perpendicular to the axis, the rotation is plain complex multiplication by <var>e</var><sup><var class="m-re">u</var>θ</sup>, with <var class="m-re">u</var> playing the role of <var class="m-i">i</var>. The half angles from the two sides add up to the full angle. Multiplying on one side only would also mix in a real part and push <var>v</var> out of 3D space. You can see that in the <var>q v</var> row of the readout.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-canvas">
+      <canvas id="lab" aria-label="3D view: a dart rotated about an axis by a quaternion, with the path of its nose"></canvas>
+      <span class="hint">drag sideways to orbit the view</span>
+    </div>
+    <div class="lab-side">
+      <div class="ctl"><label for="rAz">axis azimuth <output id="rAzO"></output></label><input id="rAz" type="range" min="0" max="360" step="1" value="35"></div>
+      <div class="ctl"><label for="rEl">axis elevation <output id="rElO"></output></label><input id="rEl" type="range" min="-90" max="90" step="1" value="40"></div>
+      <div class="ctl"><label for="rTh">rotation angle θ <output id="rThO"></output></label><input id="rTh" type="range" min="0" max="720" step="1" value="120"></div>
+      <div class="btns"><button class="primary" id="rPlay">Play 0° → 720°</button><button id="rView">Reset view</button></div>
+      <div class="inset">
+        <canvas id="half" width="150" height="150" aria-label="Unit circle in the plane of 1 and u, showing q at angle theta over 2"></canvas>
+        <p id="halfTxt"></p>
+      </div>
+      <div class="out" id="rOut"></div>
+    </div>
+  </div>
+  <div class="prose">
+    <h3>Worked example: a quarter turn about <var class="m-k">k</var></h3>
+    <p>Turn the vector <var class="m-i">i</var> (the x axis) by 90° about <var class="m-k">k</var> (the z axis). It should land on <var class="m-j">j</var>. Half of 90° is 45°, so <var>q</var> = (1 + <var class="m-k">k</var>)/√2.</p>
+  </div>
+  <div class="steps">
+    <span class="s">build q</span><span class="e">q = cos 45° + k sin 45° = (1 + k)/√2,&emsp; q* = (1 − k)/√2</span>
+    <span class="s">left side</span><span class="e">q i = (i + ki)/√2 = (i + j)/√2<small>ki = j</small></span>
+    <span class="s">right side</span><span class="e">(q i) q* = ½ (i + j)(1 − k) = ½ (i + j − ik − jk)</span>
+    <span class="s">simplify</span><span class="e">= ½ (i + j + j − i) = j<small>ik = −j,&ensp;jk = i</small></span>
+  </div>
+  <div class="prose">
+    <p><strong>Watch 360° in the lab.</strong> The dart is back where it started, yet <var>q</var> = −1, not 1. Only at 720° does <var>q</var> return home. Both <var>q</var> and −<var>q</var> give the same rotation, since the two signs cancel in <var>q v q</var>*. Unit quaternions cover every rotation exactly twice. Physicists call this the spinor property; electrons behave the same way, and you can feel it with the "plate trick": hold a plate flat on your palm and turn it one full turn, and your arm is twisted. A second full turn untwists it.</p>
+  </div>
+</section>
+
+<!-- GIMBAL -->
+<section id="gimbal">
+  <div class="prose">
+    <span class="eyebrow">Interactive</span>
+    <h2>Gimbal lock, and why quaternions avoid it</h2>
+    <p>The obvious way to describe an orientation is three angles: yaw about the vertical, then pitch about the new side axis, then roll about the nose. Each angle is a gimbal ring, and the rings are nested. The trouble starts when the middle angle, pitch, reaches ±90°. The roll axis then lies along the yaw axis, and the yaw and roll sliders turn the dart the same way. One of the three degrees of freedom is gone.</p>
+    <p>Try it. Press "Pitch to 90°", then move yaw and roll in turn. No combination of the two will tip the nose sideways. A real aircraft can still turn that way, but these three numbers can't describe it smoothly from here. The quaternion of the same pose has no such problem. It is just a point on the 3-sphere, and every direction of motion from it is available.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-canvas">
+      <canvas id="gimC" aria-label="Dart with three gimbal rings for yaw, pitch and roll"></canvas>
+      <span class="hint">drag sideways to orbit the view</span>
+    </div>
+    <div class="lab-side">
+      <div class="ctl"><label for="gY">yaw (outer ring) <output id="gYO"></output></label><input id="gY" type="range" min="-180" max="180" step="1" value="30"></div>
+      <div class="ctl"><label for="gP">pitch (middle ring) <output id="gPO"></output></label><input id="gP" type="range" min="-90" max="90" step="1" value="25"></div>
+      <div class="ctl"><label for="gR">roll (inner ring) <output id="gRO"></output></label><input id="gR" type="range" min="-180" max="180" step="1" value="0"></div>
+      <div class="btns"><button id="gLock" class="primary">Pitch to 90°</button><button id="gReset">Reset</button></div>
+      <p class="verdict" id="gVerdict"></p>
+      <div class="out" id="gOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLERP -->
+<section id="slerp">
+  <div class="prose">
+    <span class="eyebrow">Interactive</span>
+    <h2>Blending two orientations: slerp against Euler angles</h2>
+    <p>Animation, camera paths and spacecraft slews all need to get smoothly from one orientation to another. With Euler angles the natural move is to blend each angle separately. It gets there, but on a detour, speeding up and slowing down on the way.</p>
+    <p>With quaternions, both orientations are points on the unit 3-sphere. <strong>Slerp</strong> (spherical linear interpolation) walks the great circle between them at constant speed:</p>
+    <p class="display">slerp(<var>q</var><sub>A</sub>, <var>q</var><sub>B</sub>, <var>t</var>) = <var>q</var><sub>A</sub> (<var>q</var><sub>A</sub>* <var>q</var><sub>B</sub>)<sup><var>t</var></sup></p>
+    <p>This is the same idea as <var>e</var><sup><var class="m-i">i</var>θ<var>t</var></sup> sweeping round a circle, now in the complex plane that contains both orientations. The solid dart below follows slerp; the outlined orange one blends the Euler angles. Their nose paths are traced in the same colors.</p>
+  </div>
+  <div class="lab">
+    <div class="lab-canvas">
+      <canvas id="slC" aria-label="Two darts moving between the same orientations: slerp and Euler-angle blending"></canvas>
+      <span class="hint">drag sideways to orbit the view</span>
+    </div>
+    <div class="lab-side">
+      <div class="ctl"><label for="slT">t <output id="slTO"></output></label><input id="slT" type="range" min="0" max="1000" step="1" value="450"></div>
+      <div class="btns"><button id="slPlay" class="primary">Play</button><button id="slNew">New pair of poses</button></div>
+      <div class="out" id="slOut"></div>
+      <p class="note">Slerp always takes the shortest turn. The Euler path length is the total angle the dart actually turns through on the way.</p>
+    </div>
+  </div>
+  <div class="chart-box">
+    <h3>How fast the dart turns along the way</h3>
+    <div class="legend"><span><i style="border-color:var(--re)"></i>slerp</span><span><i style="border-color:var(--i);border-top-style:dashed"></i>Euler angles blended</span></div>
+    <canvas id="speed" aria-label="Line chart of turning rate against t for slerp and for Euler-angle blending"></canvas>
+    <p class="note">Turning rate in degrees per unit of <var>t</var>. If the move takes one second, this is degrees per second. Hover the chart to read values.</p>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="prose">
+    <span class="eyebrow">In practice</span>
+    <h2>Why spacecraft, game engines and telescopes use them</h2>
+  </div>
+  <div class="callouts">
+    <div class="callout"><h3>No gimbal lock</h3><p>Three Euler angles lose a degree of freedom when two gimbals line up, as the demo above shows. A unit quaternion has no such singular pose; every orientation is a regular point on the 3-sphere.</p></div>
+    <div class="callout"><h3>Four numbers, cheap to repair</h3><p>A rotation matrix stores nine numbers and drifts away from orthogonal under rounding. A quaternion stores four, and fixing drift is one division by its length.</p></div>
+    <div class="callout"><h3>Composition is multiplication</h3><p>Rotate by <var>q</var>₁, then by <var>q</var>₂: the combined rotation is <var>q</var>₂<var>q</var>₁, 16 multiplications against 27 for 3 × 3 matrices. The order matters, exactly as it does for real rotations.</p></div>
+    <div class="callout"><h3>Smooth blending</h3><p>Slerp gives constant-speed, shortest-path turning between two poses. Star trackers, attitude filters and animation rigs all rely on it. The dart at the top of this page is doing it, forever.</p></div>
+  </div>
+</section>
+
+<!-- CALC -->
+<section id="calc">
+  <div class="prose">
+    <span class="eyebrow">Try it</span>
+    <h2>Quaternion calculator</h2>
+    <p>Type two quaternions. The results show that <var>pq</var> and <var>qp</var> differ by exactly twice the cross product of their vector parts, that lengths still multiply, and how <var>p</var> looks as a 2 × 2 complex matrix and as a rotation.</p>
+  </div>
+  <div class="calc">
+    <div class="qin"><span class="nm">p =</span>
+      <input id="p0" type="number" step="any" value="0.5" aria-label="p real part"> +
+      <input id="p1" type="number" step="any" value="1" aria-label="p i part"><span class="m-i">i</span> +
+      <input id="p2" type="number" step="any" value="-1" aria-label="p j part"><span class="m-j">j</span> +
+      <input id="p3" type="number" step="any" value="2" aria-label="p k part"><span class="m-k">k</span>
+    </div>
+    <div class="qin"><span class="nm">q =</span>
+      <input id="q0" type="number" step="any" value="1" aria-label="q real part"> +
+      <input id="q1" type="number" step="any" value="0" aria-label="q i part"><span class="m-i">i</span> +
+      <input id="q2" type="number" step="any" value="2" aria-label="q j part"><span class="m-j">j</span> +
+      <input id="q3" type="number" step="any" value="-0.5" aria-label="q k part"><span class="m-k">k</span>
+    </div>
+    <div class="btns"><button id="calcC">Both complex (only i)</button><button id="calcAx">Same axis, different angles</button><button id="calcIJ">p = i, q = j</button><button id="calcR">Different axes</button></div>
+    <div class="res" id="calcOut"></div>
+  </div>
+</section>
+
+<!-- FAMILY -->
+<section id="family">
+  <div class="prose">
+    <span class="eyebrow">The family</span>
+    <h2>Each doubling costs a property</h2>
+    <p>Repeat the pair-of-numbers trick and you climb a ladder: reals, complex numbers, quaternions, octonions, sedenions. Each step doubles the dimension and gives something up. Going from ℝ to ℂ you lose the ordering (no "bigger" complex number). From ℂ to ℍ you lose commutativity. From ℍ to 𝕆 you lose associativity. After that, even division fails.</p>
+  </div>
+  <div class="tbl-wrap">
+    <table class="fam">
+      <thead><tr><th></th><th>Name</th><th>Dim</th><th>Ordered</th><th>Commutative</th><th>Associative</th><th>|pq| = |p||q|</th></tr></thead>
+      <tbody>
+        <tr><td class="sym">ℝ</td><td>Real numbers</td><td>1</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+        <tr><td class="sym">ℂ</td><td>Complex numbers</td><td>2</td><td class="no">no</td><td>yes</td><td>yes</td><td>yes</td></tr>
+        <tr class="here"><td class="sym">ℍ</td><td>Quaternions</td><td>4</td><td class="no">no</td><td class="no">no</td><td>yes</td><td>yes</td></tr>
+        <tr><td class="sym">𝕆</td><td>Octonions</td><td>8</td><td class="no">no</td><td class="no">no</td><td class="no">no (alternative only)</td><td>yes</td></tr>
+        <tr><td class="sym">𝕊</td><td>Sedenions</td><td>16</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="no">no, zero divisors appear</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="foot">ℍ is named for Hamilton. Quaternions lost the battle for 19th-century physics to Gibbs and Heaviside's vector notation, whose dot and cross products are the two halves of the quaternion product. They came back in the second half of the 20th century for spacecraft attitude control, and in 1985 Ken Shoemake introduced slerp to computer animation.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+// ---------- quaternion math ----------
+const Q={
+  mul:(a,b)=>[a[0]*b[0]-a[1]*b[1]-a[2]*b[2]-a[3]*b[3],
+              a[0]*b[1]+a[1]*b[0]+a[2]*b[3]-a[3]*b[2],
+              a[0]*b[2]-a[1]*b[3]+a[2]*b[0]+a[3]*b[1],
+              a[0]*b[3]+a[1]*b[2]-a[2]*b[1]+a[3]*b[0]],
+  conj:a=>[a[0],-a[1],-a[2],-a[3]],
+  norm:a=>Math.hypot(a[0],a[1],a[2],a[3]),
+  normalize:a=>{const n=Q.norm(a)||1;return a.map(v=>v/n);},
+  axisAngle:(u,t)=>{const s=Math.sin(t/2);return [Math.cos(t/2),u[0]*s,u[1]*s,u[2]*s];},
+  rot:(q,v)=>Q.mul(Q.mul(q,[0,v[0],v[1],v[2]]),Q.conj(q)).slice(1),
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3],
+  slerp:(a,b,t)=>{
+    let d=Q.dot(a,b);
+    if(d<0){b=b.map(x=>-x);d=-d;}
+    if(d>0.9995) return Q.normalize(a.map((x,i)=>x+(b[i]-x)*t));
+    const th=Math.acos(d),s=Math.sin(th),wa=Math.sin((1-t)*th)/s,wb=Math.sin(t*th)/s;
+    return a.map((x,i)=>wa*x+wb*b[i]);
+  },
+  angleBetween:(a,b)=>2*Math.acos(Math.min(1,Math.abs(Q.dot(a,b))))
+};
+const V={
+  cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+  norm:a=>Math.hypot(a[0],a[1],a[2]),
+  scale:(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+  add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],
+  unit:a=>{const n=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/n,a[1]/n,a[2]/n];}
+};
+const D2R=Math.PI/180,R2D=180/Math.PI;
+const f2=v=>{const r=Math.abs(v)<0.005?0:v;return r.toFixed(2);};
+const f3=v=>{const r=Math.abs(v)<0.0005?0:v;return r.toFixed(3);};
+const $=id=>document.getElementById(id);
+function qHTML(q,fmt){
+  fmt=fmt||f2;
+  const parts=[fmt(q[0])];
+  const u=[['i','m-i'],['j','m-j'],['k','m-k']];
+  for(let n=1;n<4;n++){
+    const v=Math.abs(q[n])<0.0005?0:q[n];
+    parts.push((v<0?' − ':' + ')+fmt(Math.abs(v))+'<span class="'+u[n-1][1]+'">'+u[n-1][0]+'</span>');
+  }
+  return parts.join('');
+}
+function vHTML(v){return qHTML([0,v[0],v[1],v[2]]).replace(/^0\.00 \+ /,'').replace(/^0\.00 − /,'−');}
+function cHTML(re,im,unit,cls){return f2(re)+(im<0?' − ':' + ')+f2(Math.abs(im))+'<span class="'+(cls||'m-i')+'">'+(unit||'i')+'</span>';}
+
+// ---------- theme colors ----------
+const C={};
+function readColors(){
+  const s=getComputedStyle(document.documentElement);
+  ['bg','panel','ink','muted','rule','faint','re','i','j','k','ship'].forEach(n=>C[n]=s.getPropertyValue('--'+n).trim());
+}
+function rgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return [n>>16&255,n>>8&255,n&255];}
+function shade(hex,f){const c=rgb(hex).map(v=>Math.max(0,Math.min(255,Math.round(v*f))));return 'rgb('+c.join(',')+')';}
+function alpha(hex,a){const c=rgb(hex);return 'rgba('+c.join(',')+','+a+')';}
+readColors();
+
+// ---------- canvas helpers ----------
+function fit(c){
+  const dpr=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
+  const W=Math.max(1,Math.round(w*dpr)),H=Math.max(1,Math.round(h*dpr));
+  if(c.width!==W||c.height!==H){c.width=W;c.height=H;}
+  const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w,h};
+}
+const MONO='"JetBrains Mono", ui-monospace, monospace';
+const SERIF='"Spectral", Georgia, serif';
+
+function View(canvas,opt){
+  this.c=canvas;this.yaw=opt.yaw;this.pitch=opt.pitch;this.zoom=opt.zoom||1;this.yaw0=opt.yaw;this.pitch0=opt.pitch;
+}
+View.prototype.begin=function(){
+  const r=fit(this.c);this.ctx=r.ctx;this.w=r.w;this.h=r.h;
+  this.s=Math.min(r.w,r.h)*0.24*this.zoom;
+  this.ctx.clearRect(0,0,r.w,r.h);
+  return this.ctx;
+};
+View.prototype.cam=function(p){
+  const cy=Math.cos(this.yaw),sy=Math.sin(this.yaw),cp=Math.cos(this.pitch),sp=Math.sin(this.pitch);
+  const x=p[0]*cy-p[1]*sy, y=p[0]*sy+p[1]*cy, z=p[2];
+  return [x, y*cp-z*sp, y*sp+z*cp];
+};
+View.prototype.proj=function(p){
+  const c=this.cam(p),D=7,f=D/(D+c[1]);
+  return [this.w/2+c[0]*this.s*f, this.h/2-c[2]*this.s*f, c[1]];
+};
+View.prototype.enableDrag=function(onChange){
+  let drag=null;
+  this.c.style.touchAction='pan-y';
+  this.c.style.cursor='grab';
+  this.c.addEventListener('pointerdown',e=>{drag={x:e.clientX,yaw:this.yaw};this.c.setPointerCapture(e.pointerId);});
+  this.c.addEventListener('pointermove',e=>{if(!drag)return;this.yaw=drag.yaw-(e.clientX-drag.x)*0.01;onChange();});
+  const end=()=>{drag=null;};
+  this.c.addEventListener('pointerup',end);this.c.addEventListener('pointercancel',end);
+};
+
+function drawAxes(v,len){
+  const ctx=v.ctx,ax=[[[1,0,0],C.i,'i'],[[0,1,0],C.j,'j'],[[0,0,1],C.k,'k']];
+  const o=v.proj([0,0,0]);
+  ax.forEach(([d,col,lb])=>{
+    const n=v.proj(V.scale(d,-len)),p=v.proj(V.scale(d,len));
+    ctx.setLineDash([3,4]);ctx.strokeStyle=alpha(col,0.45);ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(n[0],n[1]);ctx.lineTo(o[0],o[1]);ctx.stroke();
+    ctx.setLineDash([]);ctx.strokeStyle=alpha(col,0.85);ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(o[0],o[1]);ctx.lineTo(p[0],p[1]);ctx.stroke();
+    const t=v.proj(V.scale(d,len+0.22));
+    ctx.fillStyle=col;ctx.font='italic 600 17px '+SERIF;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(lb,t[0],t[1]);
+  });
+}
+function poly3D(v,pts,col,w,dash){
+  const ctx=v.ctx;ctx.strokeStyle=col;ctx.lineWidth=w;ctx.setLineDash(dash||[]);ctx.lineJoin='round';
+  ctx.beginPath();pts.forEach((p,i)=>{const s=v.proj(p);i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);});ctx.stroke();ctx.setLineDash([]);
+}
+function circlePts(center,axis,r,n){
+  const a=V.unit(axis),ref=Math.abs(a[2])<0.9?[0,0,1]:[1,0,0];
+  const e1=V.unit(V.cross(a,ref)),e2=V.cross(a,e1),pts=[];
+  for(let k=0;k<=n;k++){const t=k/n*Math.PI*2;pts.push(V.add(center,V.add(V.scale(e1,r*Math.cos(t)),V.scale(e2,r*Math.sin(t)))));}
+  return pts;
+}
+function dot3D(v,p,col,r,hollow){
+  const s=v.proj(p),ctx=v.ctx;ctx.beginPath();ctx.arc(s[0],s[1],r,0,Math.PI*2);
+  if(hollow){ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();}else{ctx.fillStyle=col;ctx.fill();}
+  return s;
+}
+
+const SHIP_V=[[1.5,0,0],[-0.9,0.95,0],[-0.9,-0.95,0],[-0.85,0,0.55],[-0.7,0,-0.22]];
+const SHIP_F=[[0,1,3],[0,3,2],[0,2,4],[0,4,1],[1,4,2,3]];
+const LIGHT=V.unit([-0.35,-0.55,0.76]);
+function drawShip(v,q,scale,ghost){
+  scale=scale||1;
+  const ctx=v.ctx;
+  const W=SHIP_V.map(p=>Q.rot(q,V.scale(p,scale)));
+  const P=W.map(p=>v.proj(p));
+  const faces=SHIP_F.map((f,idx)=>{
+    const a=W[f[0]],b=W[f[1]],c=W[f[2]];
+    let n=V.cross([b[0]-a[0],b[1]-a[1],b[2]-a[2]],[c[0]-a[0],c[1]-a[1],c[2]-a[2]]);
+    const cen=[0,0,0];f.forEach(i=>{cen[0]+=W[i][0]/f.length;cen[1]+=W[i][1]/f.length;cen[2]+=W[i][2]/f.length;});
+    if(V.dot(n,cen)<0)n=V.scale(n,-1);
+    n=V.unit(n);
+    const depth=f.reduce((s,i)=>s+P[i][2],0)/f.length;
+    return {f,n,depth,idx};
+  }).sort((a,b)=>b.depth-a.depth);
+  faces.forEach(F=>{
+    ctx.beginPath();F.f.forEach((i,k)=>k?ctx.lineTo(P[i][0],P[i][1]):ctx.moveTo(P[i][0],P[i][1]));ctx.closePath();
+    if(ghost){
+      ctx.fillStyle=alpha(ghost,0.10);ctx.fill();
+      ctx.setLineDash([4,3]);ctx.strokeStyle=ghost;ctx.lineWidth=1.3;ctx.stroke();ctx.setLineDash([]);
+    }else{
+      const lam=0.62+0.5*Math.max(0,V.dot(F.n,LIGHT));
+      const base=F.idx===4?C.re:C.ship;
+      ctx.fillStyle=shade(base,F.idx>=2&&F.idx<4?lam*0.78:lam);ctx.fill();
+      ctx.strokeStyle=alpha(C.ink,0.35);ctx.lineWidth=1;ctx.lineJoin='round';ctx.stroke();
+    }
+  });
+}
+const NOSE=[1.5,0,0];
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Euler (yaw Z, pitch Y, roll X), pitch positive = nose up
+function eulerQ(y,p,r){
+  return Q.mul(Q.mul(Q.axisAngle([0,0,1],y*D2R),Q.axisAngle([0,1,0],-p*D2R)),Q.axisAngle([1,0,0],r*D2R));
+}
+
+// generic player: animates a range input from its value to max
+function player(btn,input,durMs,label,onFrame,fromStart){
+  let st=null;
+  function stop(){if(st){cancelAnimationFrame(st.raf);st=null;btn.textContent=label;}}
+  btn.addEventListener('click',()=>{
+    if(st){stop();return;}
+    const min=+input.min,max=+input.max;
+    let from=+input.value;if(fromStart||from>=max)from=min;
+    input.value=from;
+    btn.textContent='Pause';
+    const t0=performance.now(),dur=durMs*(max-from)/(max-min);
+    st={raf:0};
+    const step=t=>{
+      if(!st)return;
+      const k=Math.min(1,(t-t0)/dur);input.value=from+(max-from)*k;onFrame();
+      if(k<1)st.raf=requestAnimationFrame(step);else stop();
+    };
+    st.raf=requestAnimationFrame(step);
+  });
+  input.addEventListener('input',stop);
+  return stop;
+}
+
+// ---------- HERO ----------
+const heroC=$('hero'),heroOut=$('heroOut');
+const hv=new View(heroC,{yaw:-0.55,pitch:0.38,zoom:0.85});
+function randQ(){let q;do{q=[Math.random()*2-1,Math.random()*2-1,Math.random()*2-1,Math.random()*2-1];}while(Q.norm(q)>1||Q.norm(q)<0.1);return Q.normalize(q);}
+let hA=Q.axisAngle([0,0,1],0.6),hB=randQ(),hT=0,hCur=hA,hLast=null;
+function drawHero(){
+  hv.begin();drawAxes(hv,1.85);drawShip(hv,hCur,1);
+  heroOut.innerHTML='<b>q</b> = '+qHTML(hCur)+'&emsp;|q| = '+f3(Q.norm(hCur));
+}
+function heroTick(ts){
+  if(hLast===null)hLast=ts;
+  const dt=Math.min(0.05,(ts-hLast)/1000);hLast=ts;
+  hT+=dt/2.6;
+  if(hT>=1){hT=0;hA=hB;hB=randQ();}
+  const e=hT<0.5?2*hT*hT:1-Math.pow(-2*hT+2,2)/2;
+  hCur=Q.slerp(hA,hB,e);
+  drawHero();
+  requestAnimationFrame(heroTick);
+}
+if(reduceMotion){hCur=Q.normalize([0.85,0.2,-0.3,0.38]);drawHero();}
+else requestAnimationFrame(heroTick);
+
+// ---------- 2D plane helper ----------
+function plane(canvas,half){
+  const r=fit(canvas);const s=Math.min(r.w,r.h)/(2*half);
+  const g={ctx:r.ctx,w:r.w,h:r.h,s,cx:r.w/2,cy:r.h/2};
+  g.S=p=>[g.cx+p[0]*s,g.cy-p[1]*s];
+  r.ctx.clearRect(0,0,r.w,r.h);
+  return g;
+}
+function drawGrid(g,step){
+  const ctx=g.ctx;ctx.lineWidth=1;
+  const gx=Math.ceil(g.w/2/g.s/step),gy=Math.ceil(g.h/2/g.s/step);
+  for(let k=-gx;k<=gx;k++){const a=g.S([k*step,0]);ctx.strokeStyle=k?alpha(C.faint,0.55):C.muted;ctx.beginPath();ctx.moveTo(a[0],0);ctx.lineTo(a[0],g.h);ctx.stroke();}
+  for(let k=-gy;k<=gy;k++){const a=g.S([0,k*step]);ctx.strokeStyle=k?alpha(C.faint,0.55):C.muted;ctx.beginPath();ctx.moveTo(0,a[1]);ctx.lineTo(g.w,a[1]);ctx.stroke();}
+  ctx.fillStyle=C.muted;ctx.font='11px '+MONO;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText('Re',g.w-24,g.cy+6);ctx.fillText('Im',g.cx+6,6);
+}
+function unitCircle(g){const ctx=g.ctx;ctx.setLineDash([4,4]);ctx.strokeStyle=C.muted;ctx.lineWidth=1;ctx.beginPath();ctx.arc(g.cx,g.cy,g.s,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
+
+// ---------- COMPLEX PLANE ----------
+const cC=$('cplx'),cTh=$('cTheta'),cR=$('cR');
+let z=[1.25,0.45];
+function drawComplex(){
+  const g=plane(cC,2.7),ctx=g.ctx,S=g.S;
+  const th=+cTh.value*D2R,r=+cR.value,w=[r*Math.cos(th),r*Math.sin(th)];
+  const zw=[z[0]*w[0]-z[1]*w[1],z[0]*w[1]+z[1]*w[0]];
+  drawGrid(g,1);
+  ctx.fillStyle=C.muted;ctx.font='11px '+MONO;
+  for(let k=1;k<=2;k++){const a=S([k,0]);ctx.fillText(String(k),a[0]+3,g.cy+4);const b=S([0,k]);ctx.fillText(k+'i',g.cx+4,b[1]+2);}
+  unitCircle(g);
+  let p=z.slice();ctx.fillStyle=alpha(C.re,0.35);
+  for(let n=0;n<48;n++){const q=S(p);if(Math.abs(p[0])<4&&Math.abs(p[1])<4){ctx.beginPath();ctx.arc(q[0],q[1],2.6,0,Math.PI*2);ctx.fill();}p=[p[0]*w[0]-p[1]*w[1],p[0]*w[1]+p[1]*w[0]];}
+  const az=Math.atan2(z[1],z[0]);
+  ctx.strokeStyle=alpha(C.re,0.8);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(g.cx,g.cy,g.s*0.42,-az,-(az+th),th>0);ctx.stroke();
+  ctx.strokeStyle=alpha(C.i,0.8);ctx.beginPath();ctx.arc(g.cx,g.cy,g.s*0.26,0,-th,th>0);ctx.stroke();
+  function arrow(pt,col,label,lw){
+    const a=S([0,0]),b=S(pt);ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    ctx.beginPath();ctx.arc(b[0],b[1],lw+2.5,0,Math.PI*2);ctx.fill();
+    const L=Math.hypot(pt[0],pt[1])||1;
+    ctx.font='italic 600 18px '+SERIF;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(label,b[0]+pt[0]/L*18,b[1]-pt[1]/L*18);
+  }
+  arrow(w,C.i,'w',2);arrow(z,C.ink,'z',2.2);arrow(zw,C.re,'zw',2.6);
+  $('cThetaO').textContent=(+cTh.value)+'°';
+  $('cRO').textContent=r.toFixed(2);
+  const mz=Math.hypot(...z),mzw=Math.hypot(...zw),ang=v=>(Math.atan2(v[1],v[0])*R2D).toFixed(0)+'°';
+  $('cOut').innerHTML=
+    '<span class="lbl">z</span> '+cHTML(z[0],z[1])+'<br>'+
+    '<span class="lbl">w</span> '+cHTML(w[0],w[1])+'<br>'+
+    '<span class="lbl">zw</span> '+cHTML(zw[0],zw[1])+'<br>'+
+    '<span class="lbl">|zw|</span> '+f2(mz)+' × '+f2(r)+' = '+f2(mzw)+'<br>'+
+    '<span class="lbl">arg</span> '+ang(z)+' + '+(+cTh.value)+'° → '+ang(zw);
+}
+[cTh,cR].forEach(el=>el.addEventListener('input',drawComplex));
+$('cI').addEventListener('click',()=>{cTh.value=90;cR.value=1;drawComplex();});
+$('cUnit').addEventListener('click',()=>{cR.value=1;drawComplex();});
+$('cSpiral').addEventListener('click',()=>{cR.value=0.9;if(Math.abs(+cTh.value)<15)cTh.value=30;drawComplex();});
+let cDrag=false;
+function cSet(e){const b=cC.getBoundingClientRect(),s=Math.min(b.width,b.height)/5.4;let x=(e.clientX-b.left-b.width/2)/s,y=-(e.clientY-b.top-b.height/2)/s;
+  x=Math.max(-2.5,Math.min(2.5,x));y=Math.max(-2.5,Math.min(2.5,y));if(Math.hypot(x,y)<0.05)return;z=[x,y];drawComplex();}
+cC.style.touchAction='none';cC.style.cursor='crosshair';
+cC.addEventListener('pointerdown',e=>{cDrag=true;cC.setPointerCapture(e.pointerId);cSet(e);});
+cC.addEventListener('pointermove',e=>{if(cDrag)cSet(e);});
+cC.addEventListener('pointerup',()=>cDrag=false);cC.addEventListener('pointercancel',()=>cDrag=false);
+
+// ---------- EULER SERIES ----------
+const sC=$('series'),sTh=$('sTh'),sN=$('sN');
+const termNames=['1','iθ','−θ²/2!','−iθ³/3!','θ⁴/4!','iθ⁵/5!','−θ⁶/6!','−iθ⁷/7!'];
+function drawSeries(){
+  const th=+sTh.value*D2R,N=Math.round(+sN.value);
+  const pts=[[0,0]];let term=[1,0],sum=[0,0];
+  const allPts=[[0,0]];{let t=[1,0],s=[0,0];for(let k=0;k<16;k++){s=[s[0]+t[0],s[1]+t[1]];allPts.push(s);t=[-t[1]*th/(k+1),t[0]*th/(k+1)];}}
+  for(let k=0;k<N;k++){sum=[sum[0]+term[0],sum[1]+term[1]];pts.push(sum.slice());term=[-term[1]*th/(k+1),term[0]*th/(k+1)];}
+  let ext=1.3;allPts.forEach(p=>{ext=Math.max(ext,Math.abs(p[0])*1.12,Math.abs(p[1])*1.12);});
+  const g=plane(sC,ext),ctx=g.ctx,S=g.S;
+  drawGrid(g,1);unitCircle(g);
+  // target
+  const tgt=[Math.cos(th),Math.sin(th)],T=S(tgt);
+  ctx.strokeStyle=C.re;ctx.lineWidth=2;ctx.beginPath();ctx.arc(T[0],T[1],9,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle=C.re;ctx.font='italic 600 15px '+SERIF;ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillText('eⁱᶿ',T[0]+11,T[1]-6);
+  // segments
+  for(let k=1;k<pts.length;k++){
+    const a=S(pts[k-1]),b=S(pts[k]),col=(k-1)%2===0?C.ink:C.i;
+    ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(b[0],b[1],3,0,Math.PI*2);ctx.fill();
+    if(k<=6&&Math.hypot(b[0]-a[0],b[1]-a[1])>26){
+      ctx.fillStyle=C.muted;ctx.font='12px '+MONO;ctx.textAlign='center';ctx.textBaseline='middle';
+      const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);
+      ctx.fillText(termNames[k-1],mx-dy/L*16,my+dx/L*16);
+    }
+  }
+  const last=pts[pts.length-1];
+  $('sThO').textContent=(+sTh.value)+'°';$('sNO').textContent=N;
+  const err=Math.hypot(last[0]-tgt[0],last[1]-tgt[1]);
+  $('sOut').innerHTML='<span class="lbl">sum</span> '+cHTML(last[0],last[1])+'<br><span class="lbl">target</span> '+cHTML(tgt[0],tgt[1])+'<br><span class="lbl">gap</span> '+(err<0.0005?'0.000':err.toFixed(3));
+}
+[sTh,sN].forEach(el=>el.addEventListener('input',drawSeries));
+{
+  const btn=$('sPlay');let timer=null;
+  btn.addEventListener('click',()=>{
+    if(timer){clearInterval(timer);timer=null;btn.textContent='Add terms one by one';return;}
+    sN.value=1;drawSeries();btn.textContent='Pause';
+    timer=setInterval(()=>{if(+sN.value>=12){clearInterval(timer);timer=null;btn.textContent='Add terms one by one';return;}sN.value=+sN.value+1;drawSeries();},650);
+  });
+  sN.addEventListener('input',()=>{if(timer){clearInterval(timer);timer=null;btn.textContent='Add terms one by one';}});
+}
+
+// ---------- TRIPLES ----------
+const ta=$('ta'),tb=$('tb'),tc=$('tc');
+function drawTriples(){
+  const a=+ta.value,b=+tb.value,c=+tc.value;
+  $('taO').textContent=a.toFixed(2);$('tbO').textContent=b.toFixed(2);$('tcO').textContent=c.toFixed(2);
+  const got=[c*a-b,a+c*b,c*c],need=[0,0,-1],names=['real','i','j'],R=4.5;
+  const pct=x=>Math.max(0,Math.min(100,(x+R)/(2*R)*100));
+  $('tBars').innerHTML=got.map((g,n)=>'<div class="bar-row"><span class="'+(n===1?'m-i':n===2?'m-j':'')+'">'+names[n]+'</span><div class="track"><span class="zero" style="left:50%"></span><span class="need" style="left:'+pct(need[n])+'%"></span><span class="got" style="left:'+pct(g)+'%"></span></div><span>'+f2(g)+' / '+need[n]+'</span></div>').join('');
+  const ok01=Math.abs(got[0])<0.03&&Math.abs(got[1])<0.03;
+  const v=$('tVerdict');
+  v.className='verdict alert';
+  v.innerHTML=(ok01?'The real and <span class="m-i">i</span> rows now match. ':'')+'The <span class="m-j">j</span> row is <b>c² = '+f2(c*c)+'</b>, and it has to be −1. A real number squared is never negative, so this guess fails, and so does every other one.';
+}
+[ta,tb,tc].forEach(el=>el.addEventListener('input',drawTriples));
+$('tSolve').addEventListener('click',()=>{ta.value=0;tb.value=0;drawTriples();});
+$('tRand').addEventListener('click',()=>{[ta,tb,tc].forEach(el=>el.value=(Math.round((Math.random()*4-2)*20)/20));drawTriples();});
+
+// ---------- MULTIPLICATION TABLE ----------
+const units=['1','i','j','k'];
+const T={'1':{'1':'1','i':'i','j':'j','k':'k'},'i':{'1':'i','i':'−1','j':'k','k':'−j'},'j':{'1':'j','i':'−k','j':'−1','k':'i'},'k':{'1':'k','i':'j','j':'−i','k':'−1'}};
+const mult=$('mult'),multMsg=$('multMsg');
+const cls=u=>u==='i'?'m-i':u==='j'?'m-j':u==='k'?'m-k':'';
+const U=s=>{const b=s.replace('−','');return (s[0]==='−'?'−':'')+'<span class="'+cls(b)+'">'+b+'</span>';};
+let html='<thead><tr><th>×</th>'+units.map(u=>'<th class="'+cls(u)+'">'+u+'</th>').join('')+'</tr></thead><tbody>';
+units.forEach(a=>{html+='<tr><th class="'+cls(a)+'">'+a+'</th>'+units.map(b=>'<td tabindex="0" data-a="'+a+'" data-b="'+b+'">'+U(T[a][b])+'</td>').join('')+'</tr>';});
+mult.insertAdjacentHTML('beforeend',html+'</tbody>');
+function pick(a,b){
+  mult.querySelectorAll('td').forEach(td=>{td.classList.toggle('sel',td.dataset.a===a&&td.dataset.b===b);td.classList.toggle('mir',td.dataset.a===b&&td.dataset.b===a&&a!==b);});
+  const ab=T[a][b],ba=T[b][a];
+  let msg='<var>'+U(a)+'</var>·<var>'+U(b)+'</var> = <var>'+U(ab)+'</var>';
+  if(a===b) msg+= a==='1'?'. The real unit behaves as always.':'. Each imaginary unit squares to −1, just like <var class="m-i">i</var> in ℂ.';
+  else if(ab===ba) msg+='. Multiplying by 1 commutes with everything.';
+  else msg+=', but <var>'+U(b)+'</var>·<var>'+U(a)+'</var> = <var>'+U(ba)+'</var>. Swapping the order flips the sign.';
+  multMsg.innerHTML=msg;
+}
+mult.addEventListener('click',e=>{const td=e.target.closest('td');if(td)pick(td.dataset.a,td.dataset.b);});
+mult.addEventListener('keydown',e=>{const td=e.target.closest('td');if(td&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pick(td.dataset.a,td.dataset.b);}});
+pick('i','j');
+
+// ---------- ROOTS OF -1 ----------
+const rtC=$('rootsC'),uAz=$('uAz'),uEl=$('uEl'),uPhi=$('uPhi');
+const rv=new View(rtC,{yaw:-0.5,pitch:0.35,zoom:1.15});
+function uVec(az,el){az*=D2R;el*=D2R;return [Math.cos(el)*Math.cos(az),Math.cos(el)*Math.sin(az),Math.sin(el)];}
+function drawRoots(){
+  const u=uVec(+uAz.value,+uEl.value),phi=+uPhi.value*D2R;
+  rv.begin();const ctx=rv.ctx;
+  [-0.6,-0.3,0,0.3,0.6].forEach(zz=>poly3D(rv,circlePts([0,0,zz*1.25],[0,0,1],1.25*Math.sqrt(1-zz*zz),60),alpha(C.faint,zz===0?0.9:0.55),1));
+  for(let m=0;m<6;m++){const a=m*Math.PI/6;poly3D(rv,circlePts([0,0,0],[Math.cos(a),Math.sin(a),0],1.25,60),alpha(C.faint,0.55),1);}
+  drawAxes(rv,1.8);
+  poly3D(rv,[V.scale(u,-1.25),V.scale(u,1.25)],alpha(C.re,0.6),1.5,[5,4]);
+  poly3D(rv,[[0,0,0],V.scale(u,1.25)],C.re,2.6);
+  const s=dot3D(rv,V.scale(u,1.25),C.re,6);
+  const sn=dot3D(rv,V.scale(u,-1.25),C.re,5,true);
+  ctx.fillStyle=C.re;ctx.font='italic 600 18px '+SERIF;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('u',s[0]+10,s[1]-4);ctx.font='italic 14px '+SERIF;ctx.fillText('−u',sn[0]+8,sn[1]);
+  $('uAzO').textContent=uAz.value+'°';$('uElO').textContent=uEl.value+'°';$('uPhiO').textContent=uPhi.value+'°';
+  const uq=[0,u[0],u[1],u[2]];
+  const u2=Q.mul(uq,uq);
+  const e=[Math.cos(phi),u[0]*Math.sin(phi),u[1]*Math.sin(phi),u[2]*Math.sin(phi)];
+  const p1=[2,u[0],u[1],u[2]],p2=[1,-3*u[0],-3*u[1],-3*u[2]],pr=Q.mul(p1,p2);
+  $('uOut').innerHTML=
+    '<span class="lbl">u</span> '+vHTML(u)+'<br>'+
+    '<span class="lbl">u²</span> '+qHTML(u2)+'<br>'+
+    '<span class="lbl">e^uφ</span> '+qHTML(e)+'&ensp;|·| = '+f3(Q.norm(e))+'<br>'+
+    '<span class="lbl"></span> = cos φ + u sin φ = '+f2(Math.cos(phi))+' + '+f2(Math.sin(phi))+'<span class="m-re">u</span><br>'+
+    '<span class="lbl">(2+u)(1−3u)</span><br><span class="lbl"></span> '+qHTML(pr)+'<br>'+
+    '<span class="lbl"></span> = 5 − 5<span class="m-re">u</span>, as (2+<span class="m-i">i</span>)(1−3<span class="m-i">i</span>) = 5 − 5<span class="m-i">i</span>';
+}
+[uAz,uEl,uPhi].forEach(el=>el.addEventListener('input',drawRoots));
+rv.enableDrag(drawRoots);
+$('uRand').addEventListener('click',()=>{uAz.value=Math.floor(Math.random()*360);uEl.value=Math.round(Math.asin(Math.random()*2-1)*R2D);drawRoots();});
+$('uI').addEventListener('click',()=>{uAz.value=0;uEl.value=0;drawRoots();});
+$('uK').addEventListener('click',()=>{uAz.value=0;uEl.value=90;drawRoots();});
+
+// ---------- ORDER MATTERS ----------
+const oL=$('oL'),oR=$('oR'),oP=$('oP');
+const ovL=new View(oL,{yaw:-0.6,pitch:0.4,zoom:1}),ovR=new View(oR,{yaw:-0.6,pitch:0.4,zoom:1});
+const AX={i:[1,0,0],j:[0,1,0],k:[0,0,1]};
+function oRot(which){return {ax:$('o'+which+'ax').value,ang:+$('o'+which+'ang').value};}
+function stagedQ(first,second,p){
+  if(p<=1)return Q.axisAngle(AX[first.ax],first.ang*D2R*p);
+  const q1=Q.axisAngle(AX[first.ax],first.ang*D2R);
+  return Q.mul(Q.axisAngle(AX[second.ax],second.ang*D2R*(p-1)),q1);
+}
+function rName(r){return r.ang+'° about <span class="m-'+r.ax+'">'+r.ax+'</span>';}
+function drawOrderSide(v,first,second,p,outEl){
+  v.begin();drawAxes(v,1.75);
+  const q=stagedQ(first,second,p);
+  // nose trail
+  const pts=[];for(let s=0;s<=80;s++)pts.push(Q.rot(stagedQ(first,second,p*s/80),V.scale(NOSE,0.85)));
+  poly3D(v,pts,alpha(C.re,0.75),2);
+  dot3D(v,V.scale(NOSE,0.85),alpha(C.ink,0.5),4,true);
+  drawShip(v,q,0.85);
+  const qa=Q.axisAngle(AX[first.ax],first.ang*D2R),qb=Q.axisAngle(AX[second.ax],second.ang*D2R);
+  const full=Q.mul(qb,qa);
+  outEl.innerHTML='<span class="lbl">first</span> '+rName(first)+'<br><span class="lbl">then</span> '+rName(second)+'<br><span class="lbl">q</span> '+qHTML(full)+'<br><span class="lbl">nose</span> → '+vHTML(Q.rot(full,[1,0,0]));
+  return full;
+}
+function drawOrder(){
+  const A=oRot('A'),B=oRot('B'),p=+oP.value/100;
+  $('oPO').textContent=p<=1?'doing first turn':p<2?'doing second turn':'done';
+  const qL=drawOrderSide(ovL,A,B,p,$('oLOut'));
+  const qR=drawOrderSide(ovR,B,A,p,$('oROut'));
+  const same=Q.angleBetween(qL,qR)<1e-6;
+  const v=$('oVerdict');
+  const qa=Q.axisAngle(AX[A.ax],A.ang*D2R),qb=Q.axisAngle(AX[B.ax],B.ang*D2R);
+  const d=Q.mul(qb,qa).map((x,n)=>x-Q.mul(qa,qb)[n]);
+  v.className='verdict'+(same?'':' alert');
+  v.innerHTML=same
+    ?'<b>Same result.</b> Both turns share an axis (or one is a half turn that happens to commute), so they behave like complex numbers and the order does not matter.'
+    :'<b>Different poses.</b> <var>q</var><sub>B</sub><var>q</var><sub>A</sub> − <var>q</var><sub>A</sub><var>q</var><sub>B</sub> = '+qHTML(d)+', which is twice the cross product of the two vector parts.';
+}
+['oAax','oAang','oBax','oBang'].forEach(id=>$(id).addEventListener('change',()=>{oP.value=200;drawOrder();}));
+oP.addEventListener('input',drawOrder);
+ovL.enableDrag(()=>{ovR.yaw=ovL.yaw;drawOrder();});
+ovR.enableDrag(()=>{ovL.yaw=ovR.yaw;drawOrder();});
+player($('oPlay'),oP,4000,'Play both',drawOrder,true);
+
+// ---------- ROTATION LAB ----------
+const labC=$('lab'),halfC=$('half');
+const rAz=$('rAz'),rEl=$('rEl'),rTh=$('rTh');
+const lv=new View(labC,{yaw:-0.5,pitch:0.4,zoom:0.95});
+function drawLab(){
+  const u=uVec(+rAz.value,+rEl.value),th=+rTh.value*D2R,q=Q.axisAngle(u,th);
+  lv.begin();const ctx=lv.ctx;
+  drawAxes(lv,1.7);
+  poly3D(lv,[V.scale(u,-2.3),V.scale(u,2.3)],C.re,1.8,[7,5]);
+  const b=dot3D(lv,V.scale(u,2.3),C.re,4);
+  ctx.fillStyle=C.re;ctx.font='italic 600 18px '+SERIF;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('u',b[0]+8,b[1]);
+  const n=Math.max(2,Math.ceil(th/(Math.PI/90))),pts=[];
+  for(let s=0;s<=n;s++)pts.push(Q.rot(Q.axisAngle(u,th*s/n),V.scale(NOSE,0.8)));
+  poly3D(lv,pts,alpha(C.re,0.75),2.2);
+  dot3D(lv,V.scale(NOSE,0.8),alpha(C.ink,0.5),4,true);
+  drawShip(lv,q,0.8);
+
+  const deg=+rTh.value;
+  $('rAzO').textContent=rAz.value+'°';$('rElO').textContent=rEl.value+'°';$('rThO').textContent=Math.round(deg)+'°';
+  const vx=[1,0,0],vpar=V.scale(u,V.dot(vx,u)),vperp=V.add(vx,V.scale(vpar,-1));
+  const qv=Q.mul(q,[0,1,0,0]),qvq=Q.mul(qv,Q.conj(q));
+  let status;
+  const dr=Math.round(deg);
+  if(dr%360===0&&dr>0) status=dr===360?'Dart back home, but q = −1.':'Dart home, and q = +1 again.';
+  else status='Dart turned '+(dr%360)+'°'+(dr>=360?' (after one full turn)':'')+'.';
+  $('rOut').innerHTML=
+    '<span class="lbl">u</span> '+vHTML(u)+'<br>'+
+    '<span class="lbl">q</span> '+qHTML(q)+'<br>'+
+    '<span class="lbl">−q</span> '+qHTML(q.map(x=>-x))+'<br>'+
+    '<span class="lbl">v</span> <span class="m-i">i</span> (the nose)<br>'+
+    '<span class="lbl">v∥, v⊥</span> '+vHTML(vpar)+' ; '+vHTML(vperp)+'<br>'+
+    '<span class="lbl">q v</span> '+qHTML(qv)+'<br>'+
+    '<span class="lbl">q v q*</span> '+qHTML(qvq)+'<br>'+status;
+  drawHalf(th/2);
+}
+function drawHalf(h){
+  const r=fit(halfC),ctx=r.ctx,cx=r.w/2,cy=r.h/2,R=r.w*0.34;
+  ctx.clearRect(0,0,r.w,r.h);
+  ctx.strokeStyle=alpha(C.muted,0.6);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx-R-12,cy);ctx.lineTo(cx+R+12,cy);ctx.moveTo(cx,cy-R-12);ctx.lineTo(cx,cy+R+12);ctx.stroke();
+  ctx.strokeStyle=C.muted;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle=C.muted;ctx.font='italic 13px '+SERIF;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('1',cx+R+8,cy-9);ctx.fillText('−1',cx-R-6,cy-9);
+  ctx.fillStyle=C.re;ctx.fillText('u',cx+9,cy-R-6);
+  ctx.strokeStyle=alpha(C.re,0.7);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,R*0.3,0,-h,true);ctx.stroke();
+  const px=cx+R*Math.cos(h),py=cy-R*Math.sin(h);
+  ctx.strokeStyle=C.muted;ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(cx-R*Math.cos(h),cy+R*Math.sin(h),4.5,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle=C.re;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();
+  ctx.fillStyle=C.re;ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();
+}
+$('halfTxt').innerHTML='<var>q</var> sits at angle θ/2 on the circle through 1 and <var class="m-re">u</var>. The hollow dot is −<var>q</var>, the same rotation.';
+[rAz,rEl].forEach(el=>el.addEventListener('input',drawLab));
+rTh.addEventListener('input',drawLab);
+lv.enableDrag(drawLab);
+$('rView').addEventListener('click',()=>{lv.yaw=lv.yaw0;lv.pitch=lv.pitch0;drawLab();});
+player($('rPlay'),rTh,8000,'Play 0° → 720°',drawLab,true);
+
+// ---------- GIMBAL ----------
+const gC=$('gimC'),gY=$('gY'),gP=$('gP'),gR=$('gR');
+const gv=new View(gC,{yaw:-0.75,pitch:0.35,zoom:0.8});
+function drawGimbal(){
+  const y=+gY.value,p=+gP.value,r=+gR.value;
+  const qz=Q.axisAngle([0,0,1],y*D2R),qzy=Q.mul(qz,Q.axisAngle([0,1,0],-p*D2R)),q=Q.mul(qzy,Q.axisAngle([1,0,0],r*D2R));
+  const yawAx=[0,0,1],pitchAx=Q.rot(qz,[0,1,0]),rollAx=Q.rot(qzy,[1,0,0]);
+  gv.begin();const ctx=gv.ctx;
+  drawAxes(gv,1.7);
+  // rings: each ring lies perpendicular to its axis
+  const rings=[[yawAx,2.05,C.k,'yaw'],[pitchAx,1.8,C.j,'pitch'],[rollAx,1.55,C.i,'roll']];
+  rings.forEach(([ax,rad,col])=>{poly3D(gv,circlePts([0,0,0],ax,rad,90),col,3);});
+  rings.forEach(([ax,rad,col,lb])=>{
+    poly3D(gv,[V.scale(ax,-rad*0.98),V.scale(ax,rad*0.98)],alpha(col,0.5),1,[2,3]);
+    const s=gv.proj(V.scale(ax,rad+0.05));ctx.fillStyle=col;ctx.font='600 11px '+MONO;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(lb+' axis',s[0]+6,s[1]);
+  });
+  drawShip(gv,q,0.85);
+  $('gYO').textContent=y+'°';$('gPO').textContent=p+'°';$('gRO').textContent=r+'°';
+  const sep=Math.acos(Math.min(1,Math.abs(V.dot(yawAx,rollAx))))*R2D;
+  const v=$('gVerdict');
+  if(sep<3){v.className='verdict alert';v.innerHTML='<b>Gimbal lock.</b> The roll axis lies along the yaw axis ('+sep.toFixed(1)+'° apart). Move yaw, then roll: both spin the dart about the same vertical line.';}
+  else if(sep<20){v.className='verdict';v.innerHTML='<b>Getting close.</b> The roll and yaw axes are '+sep.toFixed(0)+'° apart. Small sideways corrections now need large, fast angle changes.';}
+  else{v.className='verdict';v.innerHTML='<b>Three independent axes.</b> Roll and yaw axes are '+sep.toFixed(0)+'° apart. Each slider moves the dart a different way.';}
+  $('gOut').innerHTML='<span class="lbl">q</span> '+qHTML(q)+'<br><span class="lbl">|q|</span> '+f3(Q.norm(q))+'&ensp;(no special values anywhere)';
+}
+[gY,gP,gR].forEach(el=>el.addEventListener('input',drawGimbal));
+gv.enableDrag(drawGimbal);
+$('gLock').addEventListener('click',()=>{gP.value=90;drawGimbal();});
+$('gReset').addEventListener('click',()=>{gY.value=30;gP.value=25;gR.value=0;drawGimbal();});
+
+// ---------- SLERP ----------
+const slC=$('slC'),slT=$('slT'),spC=$('speed');
+const sv=new View(slC,{yaw:-0.55,pitch:0.38,zoom:0.95});
+let eA=[-120,75,-90],eB=[120,10,150],qA,qB,spS=[],spE=[],hoverT=null,eulerLen=0,slerpAng=0;
+const NS=200;
+function setupPair(){
+  qA=eulerQ(...eA);qB=eulerQ(...eB);
+  if(Q.dot(qA,qB)<0)qB=qB.map(x=>-x);
+  spS=[];spE=[];eulerLen=0;
+  const h=1/NS;
+  for(let n=0;n<=NS;n++){
+    const t=n/NS,t2=Math.min(1,t+h),t1=Math.max(0,t2-h);
+    spS.push(Q.angleBetween(Q.slerp(qA,qB,t1),Q.slerp(qA,qB,t2))/h*R2D);
+    const e1=eulerQ(...eA.map((a,k)=>a+(eB[k]-a)*t1)),e2=eulerQ(...eA.map((a,k)=>a+(eB[k]-a)*t2));
+    const d=Q.angleBetween(e1,e2);
+    spE.push(d/h*R2D);
+    if(n<NS)eulerLen+=d*R2D;
+  }
+  slerpAng=Q.angleBetween(qA,qB)*R2D;
+}
+function eulerAt(t){return eulerQ(...eA.map((a,k)=>a+(eB[k]-a)*t));}
+function drawSlerp(){
+  const t=+slT.value/1000;
+  sv.begin();
+  drawAxes(sv,1.7);
+  const pS=[],pE=[];
+  for(let n=0;n<=80;n++){pS.push(Q.rot(Q.slerp(qA,qB,n/80),V.scale(NOSE,0.85)));pE.push(Q.rot(eulerAt(n/80),V.scale(NOSE,0.85)));}
+  poly3D(sv,pE,C.i,2,[6,4]);
+  poly3D(sv,pS,C.re,2.4);
+  dot3D(sv,pS[0],C.ink,4,true);dot3D(sv,pS[80],C.ink,4);
+  const s0=sv.proj(pS[0]),s1=sv.proj(pS[80]),ctx=sv.ctx;
+  ctx.fillStyle=C.muted;ctx.font='600 11px '+MONO;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('A',s0[0]+8,s0[1]);ctx.fillText('B',s1[0]+8,s1[1]);
+  drawShip(sv,eulerAt(t),0.85,C.i);
+  drawShip(sv,Q.slerp(qA,qB,t),0.85);
+  $('slTO').textContent=t.toFixed(2);
+  const fe=a=>'('+a.map(x=>Math.round(x)+'°').join(', ')+')';
+  $('slOut').innerHTML=
+    '<span class="lbl">A</span> yaw, pitch, roll '+fe(eA)+'<br>'+
+    '<span class="lbl">B</span> yaw, pitch, roll '+fe(eB)+'<br>'+
+    '<span class="lbl">slerp</span> turns '+slerpAng.toFixed(0)+'° in total<br>'+
+    '<span class="lbl">Euler</span> turns '+eulerLen.toFixed(0)+'° in total ('+(eulerLen/slerpAng).toFixed(2)+'×)<br>'+
+    '<span class="lbl">now</span> '+qHTML(Q.slerp(qA,qB,t));
+  drawSpeed();
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x))),m=x/p;return (m<=1?1:m<=2?2:m<=5?5:10)*p;}
+function drawSpeed(){
+  const r=fit(spC),ctx=r.ctx,W=r.w,H=r.h;
+  ctx.clearRect(0,0,W,H);
+  const pad={l:48,r:70,t:12,b:30},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+  const maxV=Math.max(...spS,...spE)*1.08;
+  const step=niceStep(maxV/4),top=Math.ceil(maxV/step)*step;
+  const X=t=>pad.l+t*pw,Y=v=>pad.t+ph-(v/top)*ph;
+  ctx.font='11px '+MONO;ctx.textBaseline='middle';ctx.textAlign='right';
+  for(let v=0;v<=top+1e-9;v+=step){
+    ctx.strokeStyle=v===0?C.muted:alpha(C.faint,0.6);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,Y(v));ctx.lineTo(pad.l+pw,Y(v));ctx.stroke();
+    ctx.fillStyle=C.muted;ctx.fillText(Math.round(v)+'°',pad.l-8,Y(v));
+  }
+  ctx.textAlign='center';ctx.textBaseline='top';
+  [0,0.25,0.5,0.75,1].forEach(t=>{ctx.fillStyle=C.muted;ctx.fillText(t===0?'t = 0':String(t),X(t),pad.t+ph+8);});
+  function line(arr,col,dash){
+    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.setLineDash(dash||[]);ctx.lineJoin='round';ctx.beginPath();
+    arr.forEach((v,n)=>{const x=X(n/NS),y=Y(v);n?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();ctx.setLineDash([]);
+  }
+  line(spE,C.i,[6,4]);line(spS,C.re);
+  // direct labels at the right end, nudged apart
+  let yS=Y(spS[NS]),yE=Y(spE[NS]);
+  if(Math.abs(yS-yE)<14){const m=(yS+yE)/2;if(yS<=yE){yS=m-7;yE=m+7;}else{yS=m+7;yE=m-7;}}
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.font='12px '+MONO;ctx.fillStyle=C.ink;
+  ctx.fillText('slerp',pad.l+pw+8,yS);ctx.fillText('Euler',pad.l+pw+8,yE);
+  // current t marker
+  const t=+slT.value/1000,idx=Math.round(t*NS);
+  ctx.strokeStyle=alpha(C.muted,0.7);ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(X(t),pad.t);ctx.lineTo(X(t),pad.t+ph);ctx.stroke();ctx.setLineDash([]);
+  [[spS,C.re],[spE,C.i]].forEach(([a,col])=>{ctx.fillStyle=col;ctx.strokeStyle=C.panel;ctx.lineWidth=2;ctx.beginPath();ctx.arc(X(t),Y(a[idx]),4.5,0,Math.PI*2);ctx.fill();ctx.stroke();});
+  // hover tooltip
+  if(hoverT!==null){
+    const hi=Math.round(hoverT*NS),hx=X(hi/NS);
+    ctx.strokeStyle=C.muted;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(hx,pad.t);ctx.lineTo(hx,pad.t+ph);ctx.stroke();
+    [[spS,C.re],[spE,C.i]].forEach(([a,col])=>{ctx.fillStyle=col;ctx.strokeStyle=C.panel;ctx.lineWidth=2;ctx.beginPath();ctx.arc(hx,Y(a[hi]),4,0,Math.PI*2);ctx.fill();ctx.stroke();});
+    const lines=['t = '+(hi/NS).toFixed(2),'slerp  '+spS[hi].toFixed(0)+'°','Euler  '+spE[hi].toFixed(0)+'°'];
+    ctx.font='12px '+MONO;const bw=Math.max(...lines.map(s=>ctx.measureText(s).width))+20,bh=62;
+    let bx=hx+10;if(bx+bw>W-4)bx=hx-10-bw;const by=pad.t+4;
+    ctx.fillStyle=C.panel;ctx.strokeStyle=C.rule;ctx.lineWidth=1;ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.fill();ctx.stroke();
+    ctx.textAlign='left';ctx.textBaseline='top';
+    lines.forEach((s,n)=>{ctx.fillStyle=n?C.ink:C.muted;ctx.fillText(s,bx+10,by+8+n*16);});
+  }
+  spC._geom={pad,pw};
+}
+spC.addEventListener('pointermove',e=>{const g=spC._geom;if(!g)return;const b=spC.getBoundingClientRect();const t=(e.clientX-b.left-g.pad.l)/g.pw;hoverT=(t<0||t>1)?null:t;drawSpeed();});
+spC.addEventListener('pointerleave',()=>{hoverT=null;drawSpeed();});
+slT.addEventListener('input',drawSlerp);
+sv.enableDrag(drawSlerp);
+player($('slPlay'),slT,4000,'Play',drawSlerp,true);
+$('slNew').addEventListener('click',()=>{
+  const rnd=(a,b)=>Math.round(a+Math.random()*(b-a));
+  eA=[rnd(-150,150),rnd(-70,70),rnd(-150,150)];eB=[rnd(-150,150),rnd(-70,70),rnd(-150,150)];
+  setupPair();slT.value=450;drawSlerp();
+});
+setupPair();
+
+// ---------- CALCULATOR ----------
+const ids=['p0','p1','p2','p3','q0','q1','q2','q3'].map(i=>$(i));
+function calc(){
+  const v=ids.map(el=>{const x=parseFloat(el.value);return isFinite(x)?x:0;});
+  const p=v.slice(0,4),q=v.slice(4);
+  const pq=Q.mul(p,q),qp=Q.mul(q,p);
+  const pv=p.slice(1),qv=q.slice(1);
+  const dot=V.dot(pv,qv),cr=V.cross(pv,qv);
+  const diff=pq.map((x,i)=>x-qp[i]);
+  const same=diff.every(x=>Math.abs(x)<1e-9);
+  const vec=a=>'('+a.map(f2).join(', ')+')';
+  const np=Q.norm(p),n2=np*np;
+  const pinv=n2>1e-12?Q.conj(p).map(x=>x/n2):null;
+  const z1=[p[0],p[1]],z2=[p[2],p[3]];
+  const cz=(c)=>f2(c[0])+(c[1]<0?'−':'+')+f2(Math.abs(c[1]))+'<span class="m-i">i</span>';
+  let rotTxt='—';
+  if(np>1e-9){const u=Q.normalize(p),ang=2*Math.acos(Math.max(-1,Math.min(1,u[0])))*R2D,vn=V.norm(u.slice(1));
+    rotTxt=vn<1e-9?'no rotation (a real number)':ang.toFixed(1)+'° about '+vHTML(V.scale(u.slice(1),1/vn));}
+  $('calcOut').innerHTML=
+    '<div><span class="lbl">p q</span>'+qHTML(pq)+'</div>'+
+    '<div><span class="lbl">q p</span>'+qHTML(qp)+'</div>'+
+    '<div><span class="lbl">p q − q p</span>'+qHTML(diff)+(same?'&ensp;they commute':'')+'</div>'+
+    '<div><span class="lbl">2 (v<sub>p</sub> × v<sub>q</sub>)</span>'+vHTML(V.scale(cr,2))+'</div>'+
+    '<div><span class="lbl">real part of pq: p₀q₀ − v<sub>p</sub>·v<sub>q</sub></span>'+f2(p[0]*q[0])+' − '+f2(dot)+' = '+f2(pq[0])+'</div>'+
+    '<div><span class="lbl">lengths</span>|p||q| = '+f3(np)+' × '+f3(Q.norm(q))+' = '+f3(np*Q.norm(q))+'<br>|pq| = '+f3(Q.norm(pq))+'</div>'+
+    '<div><span class="lbl">conjugate and inverse of p</span>p* = '+qHTML(Q.conj(p))+'<br>p⁻¹ = '+(pinv?qHTML(pinv,f3):'undefined for p = 0')+'</div>'+
+    '<div><span class="lbl">check: p p⁻¹</span>'+(pinv?qHTML(Q.mul(p,pinv),f3):'—')+'</div>'+
+    '<div><span class="lbl">p as a 2 × 2 complex matrix</span>[ '+cz(z1)+' , '+cz(z2)+' ]<br>[ '+cz([-z2[0],z2[1]])+' , '+cz([z1[0],-z1[1]])+' ]</div>'+
+    '<div><span class="lbl">determinant = |p|²</span>'+f3(n2)+'</div>'+
+    '<div><span class="lbl">p / |p| as a rotation</span>'+rotTxt+'</div>';
+}
+ids.forEach(el=>el.addEventListener('input',calc));
+function setCalc(a){ids.forEach((el,i)=>el.value=a[i]);calc();}
+$('calcC').addEventListener('click',()=>setCalc([1,2,0,0,3,-1,0,0]));
+$('calcAx').addEventListener('click',()=>setCalc([0.5,1,1,1,2,-0.5,-0.5,-0.5]));
+$('calcIJ').addEventListener('click',()=>setCalc([0,1,0,0,0,0,1,0]));
+$('calcR').addEventListener('click',()=>setCalc([0.5,1,-1,2,1,0,2,-0.5]));
+calc();
+
+// ---------- redraw on theme / resize ----------
+function drawStatic(){drawComplex();drawSeries();drawTriples();drawRoots();drawOrder();drawLab();drawGimbal();drawSlerp();if(reduceMotion)drawHero();}
+function redrawAll(){readColors();drawStatic();}
+const mq=window.matchMedia('(prefers-color-scheme: dark)');
+if(mq.addEventListener)mq.addEventListener('change',redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class']});
+if(window.ResizeObserver){let pend=false;const ro=new ResizeObserver(()=>{if(pend)return;pend=true;requestAnimationFrame(()=>{pend=false;drawStatic();});});[cC,sC,rtC,oL,oR,labC,gC,slC,spC,heroC].forEach(c=>ro.observe(c));}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(redrawAll);
+drawStatic();
+})();
+</script>
+
+</body></html>
