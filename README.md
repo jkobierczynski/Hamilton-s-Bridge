@@ -25,11 +25,11 @@ The dart at the top of the page turns non-stop, blending smoothly between random
 
 ## LIVE demo
 
-[Hamilton's Bridge demo](https://jurgenkobierczynski.com/Hamilton's Bridge/Hamilton's Bridge.html)
+[Hamilton's Bridge demo](https://jurgenkobierczynski.com/Hamilton-s-Bridge/Hamilton-s-Bridge.html)
 
 ## Screenshots
 
-![Hamilton's Bridge](Hamilton's Bridge.jpg)
+![Hamilton's Bridge](Hamilton-s-Bridge.jpg)
 
 ## Made with Claude
 
