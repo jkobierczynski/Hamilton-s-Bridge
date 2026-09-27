@@ -23,6 +23,18 @@ The whole site is one self-contained `index.html`: no build step, no dependencie
 
 The dart at the top of the page turns non-stop, blending smoothly between random orientations with slerp.
 
+## LIVE demo
+
+[Hamilton's Bridge demo](https://jurgenkobierczynski.com/Hamilton's Bridge/Hamilton's Bridge.html)
+
+## Screenshots
+
+![Hamilton's Bridge](Hamilton's Bridge.jpg)
+
+## Made with Claude
+
+Made using Claude Sonnet 5 High
+
 ## Running it
 
 Open `index.html` in any modern browser. That's all.
